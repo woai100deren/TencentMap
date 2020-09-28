@@ -44,4 +44,6 @@ dependencies {
     //地图依赖库
     //地位sdk
     implementation 'com.tencent.map.geolocation:TencentLocationSdk-openplatform:7.2.6'
+    //地图组件
+    implementation 'com.tencent.map:sdk-utilities:1.0.6'
 }
