@@ -36,4 +36,12 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
+    //工具类
+    implementation 'com.github.woai100deren:CommonUtils:0.2'
+
+    //腾讯地图基础库
+    implementation 'com.tencent.map:tencent-map-vector-sdk:4.3.9.6'
+    //地图依赖库
+    //地位sdk
+    implementation 'com.tencent.map.geolocation:TencentLocationSdk-openplatform:7.2.6'
 }

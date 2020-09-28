@@ -19,3 +19,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+-keep class com.tencent.tencentmap.**{*;}
+-keep class com.tencent.map.**{*;}
+-keep class com.tencent.beacontmap.**{*;}
+-keep class navsns.**{*;}
+-dontwarn com.qq.**
+-dontwarn com.tencent.**
