@@ -19,6 +19,7 @@
             android:id="@+id/seekBar"
             android:max="20000"
             android:min="3000"
+            android:thumb="@mipmap/ic_zoom"
             android:layout_width="wrap_content"
             android:layout_height="200dp"
             app:layout_constraintTop_toTopOf="parent"

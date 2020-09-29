@@ -1,8 +1,11 @@
 package com.dj.tencentmap;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -110,8 +113,23 @@ public class VerticalSeekBar extends AppCompatSeekBar {
 
     @Override
     public void setThumb(Drawable thumb) {
-        mThumb = thumb;
-        super.setThumb(thumb);
+        mThumb = rotateDrawable(thumb,-90);
+        super.setThumb(mThumb);
+    }
+
+    private Drawable rotateDrawable(Drawable drawable, float angle){
+        //创建一个Matrix对象
+        Matrix matrix = new Matrix();
+        //由darwable创建一个bitmap对象
+        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+        //设置旋转角度
+        matrix.setRotate(angle);
+        //以bitmap跟matrix一起创建一个新的旋转以后的bitmap
+        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
+                bitmap.getHeight(), matrix, true);
+        //bitmap转化为drawable对象
+        //不要使用new BitmapDrawable(Bitmap bitmap)，使用下面这个，可以正确设置其目标的密度。
+        return new BitmapDrawable(getResources(),bitmap);
     }
 
     void onStartTrackingTouch() {
