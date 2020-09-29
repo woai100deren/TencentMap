@@ -21,6 +21,7 @@ public class VerticalSeekBar extends AppCompatSeekBar {
 
     private Drawable mThumb;
     private OnSeekBarChangeListener mOnSeekBarChangeListener;
+    private int degrees = -90;
 
     public VerticalSeekBar(Context context) {
         super(context);
@@ -52,7 +53,7 @@ public class VerticalSeekBar extends AppCompatSeekBar {
 
     @Override
     protected void onDraw(Canvas c) {
-        c.rotate(-90);
+        c.rotate(degrees);
         c.translate(-getHeight(), 0);
 
         super.onDraw(c);
@@ -113,7 +114,7 @@ public class VerticalSeekBar extends AppCompatSeekBar {
 
     @Override
     public void setThumb(Drawable thumb) {
-        mThumb = rotateDrawable(thumb,-90);
+        mThumb = rotateDrawable(thumb,degrees);
         super.setThumb(mThumb);
     }
 
