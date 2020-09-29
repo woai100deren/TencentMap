@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
@@ -57,13 +58,21 @@ public class VerticalSeekBar extends AppCompatSeekBar {
     @Override
     public synchronized void setProgress(int progress) {
         super.setProgress(progress);
-        onProgressRefresh(getProgress() / (float) getMax(), true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            onProgressRefresh((getProgress() - getMin()) / (float) (getMax() - getMin()), true);
+        }else{
+            onProgressRefresh(getProgress() / (float) getMax(), true);
+        }
     }
 
     @Override
     public void setProgress(int progress, boolean animate) {
         super.setProgress(progress, animate);
-        onProgressRefresh(getProgress() / (float) getMax(), true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            onProgressRefresh((getProgress() - getMin()) / (float) (getMax() - getMin()), true);
+        }else{
+            onProgressRefresh(getProgress() / (float) getMax(), true);
+        }
     }
 
     public void onProgressRefresh(float scale, boolean fromUser) {
