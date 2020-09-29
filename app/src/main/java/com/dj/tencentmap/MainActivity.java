@@ -5,13 +5,13 @@ import android.view.View;
 import android.widget.SeekBar;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.dj.library.LogUtils;
 import com.dj.tencentmap.databinding.ActivityMainBinding;
-import com.tencent.tencentmap.mapsdk.maps.CameraUpdate;
-import com.tencent.tencentmap.mapsdk.maps.CameraUpdateFactory;
-import com.tencent.tencentmap.mapsdk.maps.TencentMap;
-import com.tencent.tencentmap.mapsdk.maps.model.CameraPosition;
+import com.dj.tencentmap.model.MapModel;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
@@ -20,17 +20,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-        mapFragment = (MapFragment)getSupportFragmentManager().findFragmentById(R.id.mapFragment);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+
+        addMapFragment();
+
+
         binding.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if(isSeekBarChange) {
                     LogUtils.e("当前大小：" + progress / 1000.0f);
-                    //地图视野调整，参考：https://lbs.qq.com/mobile/androidMapSDK/developerGuide/setCamera
-                    CameraUpdate cameraSigma = CameraUpdateFactory.zoomTo(progress/ 1000.0f);
-                    mapFragment.getMap().moveCamera(cameraSigma); //移动地图
+                    mapFragment.moveCamera(progress/ 1000.0f); //移动地图
                 }
             }
 
@@ -47,16 +47,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mapFragment.getMap().setOnCameraChangeListener(new TencentMap.OnCameraChangeListener() {
+        MapModel mapModel = ViewModelProviders.of(this).get(MapModel.class);//获取ViewModel,让ViewModel与此activity绑定
+        mapModel.getMapZoomLevel().observe(this, new Observer<Integer>() { //注册观察者
             @Override
-            public void onCameraChange(CameraPosition cameraPosition) {
-                binding.seekBar.setProgress((int) (cameraPosition.zoom * 1000),false);
-            }
-
-            @Override
-            public void onCameraChangeFinished(CameraPosition cameraPosition) {
-                LogUtils.e("当前缩放级别："+cameraPosition.zoom);
-                binding.seekBar.setProgress((int) (cameraPosition.zoom * 1000),false);
+            public void onChanged(Integer s) {
+                LogUtils.e("activity中接收zoom变化："+s);
+                binding.seekBar.setProgress(s,false);
             }
         });
 
@@ -66,5 +62,14 @@ public class MainActivity extends AppCompatActivity {
                 mapFragment.aggregate();
             }
         });
+    }
+
+    /**
+     * 添加地图fragment
+     */
+    private void addMapFragment(){
+        mapFragment = new MapFragment();
+
+        getSupportFragmentManager().beginTransaction().add(R.id.mapFragment, mapFragment).commit();
     }
 }

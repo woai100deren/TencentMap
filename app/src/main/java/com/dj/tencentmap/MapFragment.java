@@ -1,5 +1,6 @@
 package com.dj.tencentmap;
 
+import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
@@ -7,15 +8,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.dj.library.LogUtils;
+import com.dj.tencentmap.model.MapModel;
 import com.tencent.map.geolocation.TencentLocation;
 import com.tencent.map.geolocation.TencentLocationListener;
 import com.tencent.map.geolocation.TencentLocationManager;
 import com.tencent.map.geolocation.TencentLocationRequest;
+import com.tencent.tencentmap.mapsdk.maps.CameraUpdate;
+import com.tencent.tencentmap.mapsdk.maps.CameraUpdateFactory;
 import com.tencent.tencentmap.mapsdk.maps.LocationSource;
 import com.tencent.tencentmap.mapsdk.maps.SupportMapFragment;
+import com.tencent.tencentmap.mapsdk.maps.TencentMap;
 import com.tencent.tencentmap.mapsdk.maps.TencentMapOptions;
 import com.tencent.tencentmap.mapsdk.maps.UiSettings;
+import com.tencent.tencentmap.mapsdk.maps.model.CameraPosition;
 import com.tencent.tencentmap.mapsdk.maps.model.MyLocationStyle;
 import com.tencent.tencentmap.mapsdk.vector.utils.clustering.ClusterManager;
 import com.tencent.tencentmap.mapsdk.vector.utils.clustering.algo.NonHierarchicalDistanceBasedAlgorithm;
@@ -24,8 +34,8 @@ import com.tencent.tencentmap.mapsdk.vector.utils.clustering.view.DefaultCluster
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapFragment extends SupportMapFragment implements LocationSource, TencentLocationListener {
-
+public class MapFragment extends SupportMapFragment implements LocationSource, TencentLocationListener , TencentMap.OnCameraChangeListener {
+    private FragmentActivity activity;
     protected LocationSource.OnLocationChangedListener locationChangedListener;
 
     protected TencentLocationManager locationManager;
@@ -39,6 +49,18 @@ public class MapFragment extends SupportMapFragment implements LocationSource, T
         initLocation();
         initUiSetting();
         return view;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        activity = getActivity();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        activity = null;
     }
 
     private void initUiSetting() {
@@ -59,6 +81,7 @@ public class MapFragment extends SupportMapFragment implements LocationSource, T
 
         //3D建筑物是否显示(默认true)
         getMap().setBuilding3dEffectEnable(true);
+        getMap().setOnCameraChangeListener(this);
 
         LogUtils.e("最小缩放："+getMap().getMinZoomLevel()+",最大缩放："+getMap().getMaxZoomLevel());
     }
@@ -172,5 +195,27 @@ public class MapFragment extends SupportMapFragment implements LocationSource, T
         items.add(new MarkerClusterItem(22.534756,114.082031));
         mClusterManager.addItems(items);
         getMap().setOnCameraChangeListener(mClusterManager);
+    }
+
+    @Override
+    public void onCameraChange(CameraPosition cameraPosition) {
+        LogUtils.e("zoom变化："+cameraPosition);
+        if(activity!=null) {
+            ViewModelProviders.of(activity).get(MapModel.class).setMapZoomLevel((int) (cameraPosition.zoom * 1000));
+        }
+    }
+
+    @Override
+    public void onCameraChangeFinished(CameraPosition cameraPosition) {
+        LogUtils.e("zoom变化："+cameraPosition);
+        if(activity!=null) {
+            ViewModelProviders.of(activity).get(MapModel.class).setMapZoomLevel((int) (cameraPosition.zoom * 1000));
+        }
+    }
+
+    public void moveCamera(float zoomLevel){
+        //地图视野调整，参考：https://lbs.qq.com/mobile/androidMapSDK/developerGuide/setCamera
+        CameraUpdate cameraSigma = CameraUpdateFactory.zoomTo(zoomLevel);
+        getMap().moveCamera(cameraSigma); //移动地图
     }
 }
