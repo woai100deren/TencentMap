@@ -26,6 +26,9 @@ import com.tencent.tencentmap.mapsdk.maps.TencentMap;
 import com.tencent.tencentmap.mapsdk.maps.TencentMapOptions;
 import com.tencent.tencentmap.mapsdk.maps.UiSettings;
 import com.tencent.tencentmap.mapsdk.maps.model.CameraPosition;
+import com.tencent.tencentmap.mapsdk.maps.model.LatLng;
+import com.tencent.tencentmap.mapsdk.maps.model.Marker;
+import com.tencent.tencentmap.mapsdk.maps.model.MarkerOptions;
 import com.tencent.tencentmap.mapsdk.maps.model.MyLocationStyle;
 import com.tencent.tencentmap.mapsdk.vector.utils.clustering.ClusterManager;
 import com.tencent.tencentmap.mapsdk.vector.utils.clustering.algo.NonHierarchicalDistanceBasedAlgorithm;
@@ -217,5 +220,24 @@ public class MapFragment extends SupportMapFragment implements LocationSource, T
         //地图视野调整，参考：https://lbs.qq.com/mobile/androidMapSDK/developerGuide/setCamera
         CameraUpdate cameraSigma = CameraUpdateFactory.zoomTo(zoomLevel);
         getMap().moveCamera(cameraSigma); //移动地图
+    }
+
+    public void addMarker(){
+        final LatLng position = new LatLng(30.476195,114.416428);
+        final Marker mMarker = getMap().addMarker(new MarkerOptions(position));
+        getMap().setOnMarkerClickListener(new TencentMap.OnMarkerClickListener(){
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                if(marker.getId().equals(mMarker.getId())) {
+                    LogUtils.e("点击了Marker:"+mMarker.getId());
+                    CameraUpdate cameraSigma = CameraUpdateFactory.newLatLngZoom(position,//中心点坐标，地图目标经纬度
+                            18);//目标缩放级别
+                    getMap().animateCamera(cameraSigma); //移动地图,在 500ms 内以匀速将地图状态设置为 cameraUpdate
+                }
+                return false;
+            }
+        });
+        //设置Marker支持点击
+        mMarker.setClickable(true);
     }
 }
