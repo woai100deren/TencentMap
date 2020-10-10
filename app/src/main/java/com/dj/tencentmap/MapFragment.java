@@ -3,6 +3,7 @@ package com.dj.tencentmap;
 import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -139,7 +140,10 @@ public class MapFragment extends SupportMapFragment implements LocationSource, T
     @Override
     public void activate(LocationSource.OnLocationChangedListener onLocationChangedListener) {
         locationChangedListener = onLocationChangedListener;
+        //连续定位
 //        locationManager.requestLocationUpdates(locationRequest, this, Looper.myLooper());
+        //单次定位
+        locationManager.requestSingleFreshLocation(null, this, Looper.getMainLooper());
     }
 
     @Override
