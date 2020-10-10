@@ -296,7 +296,7 @@ public class MapFragment extends SupportMapFragment implements LocationSource, T
                             getMap().getCameraPosition().zoom,  //目标缩放级别
                             45f, //目标倾斜角[0.0 ~ 45.0] (垂直地图时为0)
                             getMap().getCameraPosition().bearing)); //目标旋转角 0~360° (正北方为0)
-            getMap().moveCamera(cameraSigma); //移动地图
+            getMap().animateCamera(cameraSigma); //移动地图
         }else{
             is2d = true;
             CameraUpdate cameraSigma =
@@ -305,7 +305,7 @@ public class MapFragment extends SupportMapFragment implements LocationSource, T
                             getMap().getCameraPosition().zoom,  //目标缩放级别
                             0, //目标倾斜角[0.0 ~ 45.0] (垂直地图时为0)
                             getMap().getCameraPosition().bearing)); //目标旋转角 0~360° (正北方为0)
-            getMap().moveCamera(cameraSigma); //移动地图
+            getMap().animateCamera(cameraSigma); //移动地图
         }
     }
 }
