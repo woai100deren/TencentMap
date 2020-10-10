@@ -69,6 +69,13 @@ public class MainActivity extends AppCompatActivity {
                 mapFragment.addMarker();
             }
         });
+
+        binding.carMoveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mapFragment.carMove();
+            }
+        });
     }
 
     /**
