@@ -220,6 +220,11 @@ public class MapFragment extends SupportMapFragment implements LocationSource, T
     @Override
     public void onCameraChangeFinished(CameraPosition cameraPosition) {
         LogUtils.e("zoom变化："+cameraPosition);
+        if(cameraPosition.tilt == 0){
+            is2d = true;
+        }else{
+            is2d = false;
+        }
         if(activity!=null) {
             ViewModelProviders.of(activity).get(MapModel.class).setMapZoomLevel((int) (cameraPosition.zoom * 1000));
         }
