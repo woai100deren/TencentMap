@@ -76,6 +76,13 @@ public class MainActivity extends AppCompatActivity {
                 mapFragment.carMove();
             }
         });
+
+        binding.changeSkewBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mapFragment.changeSkew();
+            }
+        });
     }
 
     /**

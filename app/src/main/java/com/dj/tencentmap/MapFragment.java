@@ -50,6 +50,7 @@ public class MapFragment extends SupportMapFragment implements LocationSource, T
     protected TencentLocationRequest locationRequest;
 
     protected UiSettings mapUiSettings;
+    private boolean is2d = true;
 
     @Override
     public View onCreateView(LayoutInflater layoutinflater, ViewGroup viewgroup, Bundle bundle) {
@@ -276,5 +277,30 @@ public class MapFragment extends SupportMapFragment implements LocationSource, T
                 LatLngBounds.builder().include(Arrays.asList(mCarLatLngArray)).build(), 50));
         //第六步：开启动画移动
         mAnimator.startAnimation();
+    }
+
+    /**
+     * 切换倒伏角度(skew) : 以相机为顶点与地图平面的垂线和地图中心点之间的夹角，理解为2D和3D切换
+     */
+    public void changeSkew(){
+        if(is2d){
+            is2d = false;
+            CameraUpdate cameraSigma =
+                    CameraUpdateFactory.newCameraPosition(new CameraPosition(
+                            getMap().getCameraPosition().target, //中心点坐标，地图目标经纬度
+                            getMap().getCameraPosition().zoom,  //目标缩放级别
+                            45f, //目标倾斜角[0.0 ~ 45.0] (垂直地图时为0)
+                            getMap().getCameraPosition().bearing)); //目标旋转角 0~360° (正北方为0)
+            getMap().moveCamera(cameraSigma); //移动地图
+        }else{
+            is2d = true;
+            CameraUpdate cameraSigma =
+                    CameraUpdateFactory.newCameraPosition(new CameraPosition(
+                            getMap().getCameraPosition().target, //中心点坐标，地图目标经纬度
+                            getMap().getCameraPosition().zoom,  //目标缩放级别
+                            0, //目标倾斜角[0.0 ~ 45.0] (垂直地图时为0)
+                            getMap().getCameraPosition().bearing)); //目标旋转角 0~360° (正北方为0)
+            getMap().moveCamera(cameraSigma); //移动地图
+        }
     }
 }
